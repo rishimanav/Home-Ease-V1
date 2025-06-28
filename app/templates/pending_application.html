@@ -1,0 +1,155 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Service
+{% endblock %}
+
+{% block content %}
+    <div class="content-600 align-self-center">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Edit Service - {{ service.name }}</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    Update the service details or delete the service from the database. 
+                    Ensure that the information provided is correct before updating.
+                </p>
+                <form id="edit-service-form" method="POST" enctype="multipart/form-data" id="edit-service-form">
+                    {{ form_edit.hidden_tag() }}
+                    <input type="hidden" name="form_name" value="edit_service">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="form-floating">
+                            {% if form_edit.name.errors %}
+                                {{ form_edit.name(class="form-control form-control-md is-invalid") }}
+                                {{ form_edit.name.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_edit.name.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form_edit.name(class="form-control form-control-md") }}
+                                {{ form_edit.name.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
+                            {% if form_edit.description.errors %}
+                                {{ form_edit.description(class="form-control form-control-md is-invalid") }}
+                                {{ form_edit.description.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_edit.description.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form_edit.description(class="form-control form-control-md") }}
+                                {{ form_edit.description.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
+                            {% if form_edit.base_price.errors %}
+                                {{ form_edit.base_price(class="form-control form-control-md is-invalid") }}
+                                {{ form_edit.base_price.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_edit.base_price.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form_edit.base_price(class="form-control form-control-md") }}
+                                {{ form_edit.base_price.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
+                            {% if form_edit.estimated_duration.errors %}
+                                {{ form_edit.estimated_duration(class="form-control form-control-md is-invalid") }}
+                                {{ form_edit.estimated_duration.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_edit.estimated_duration.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form_edit.estimated_duration(class="form-control form-control-md") }}
+                                {{ form_edit.estimated_duration.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
+                            {% if form_edit.category_id.errors %}
+                                {{ form_edit.category_id(class="form-control form-control-md is-invalid") }}
+                                {{ form_edit.category_id.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_edit.category_id.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form_edit.category_id(class="form-control form-control-md") }}
+                                {{ form_edit.category_id.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
+                            {% if form_edit.zipcodes.errors %}
+                                {{ form_edit.zipcodes(class="form-control form-control-md is-invalid") }}
+                                {{ form_edit.zipcodes.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_edit.zipcodes.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form_edit.zipcodes(class="form-control form-control-md") }}
+                                {{ form_edit.zipcodes.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group d-flex flex-column gap-2">
+                            <label for="image" class="form-control-label">Upload Image</label>
+                            <div id="image-preview">
+                                <img id="current-image" src="{{ url_for('static', filename=service.image) }}" class="service-img" alt="Current Service Image">
+                            </div>
+                            {% if form_edit.image.errors %}
+                                {{ form_edit.image(class="form-control-file form-control-md is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_edit.image.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form_edit.image(class="form-control-file form-control-md") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group mx-auto">
+                            {{ form_edit.submit(class="btn btn-success") }}
+                        </div>
+                    </div>
+                </form>
+                <hr>
+                <p class="text-danger">
+                    <strong>Please note that once you delete a service, it can't be undone.</strong>
+                </p>
+                <form id="delete-service-form" method="POST" id="delete-service-form" action="{{ url_for('edit_service', service_id=service.id) }}">
+                    {{ form_delete.hidden_tag() }}
+                    <input type="hidden" name="form_name" value="delete_service">
+                    <div class="form-group text-center">
+                        {{ form_delete.submit(class="btn btn-danger") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

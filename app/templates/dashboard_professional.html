@@ -1,0 +1,462 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+    <div class="content-1400 mx-auto">
+        <h3 class="text-secondary"> Hi {{ current_user.professional[0].first_name }} {{ current_user.professional[0].last_name }}</h3>
+        {% if status == "Pending" %}
+            <div class="content-800 mx-auto">
+                <div class="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="alert alert-info">
+                    Your application is currently being reviewed. Once approved, 
+                    you'll be eligible to receive service requests. If any issues 
+                    are identified, we'll contact you with further instructions.
+                </div>
+            </div>
+        {% elif status == "Rejected" %}
+            <div class="content-800 mx-auto">
+                <div class="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="alert alert-danger">
+                    Regret to inform you that your application was rejected. 
+                    Please follow the below admin comments and resubmit your application.
+                    <br>
+                    <hr>
+                    <strong>Admin comments:</strong> <em>{{ comments }}</em>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Resubmit Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            Complete the form below to rectify your professional registration.
+                        </p>
+                        <form method="POST" enctype="multipart/form-data" action="">
+                            {{ form.hidden_tag() }}
+                            <div class="d-flex flex-column gap-3">
+                                <div class="form-floating">
+                                    {% if form.first_name.errors %}
+                                        {{ form.first_name(class="form-control form-control-md  is-invalid") }}
+                                        {{ form.first_name.label(class="form-control-label") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.first_name.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.first_name(class="form-control form-control-md ") }}
+                                        {{ form.first_name.label(class="form-control-label") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-floating">
+                                    {% if form.last_name.errors %}
+                                        {{ form.last_name(class="form-control form-control-md is-invalid") }}
+                                        {{ form.last_name.label(class="form-control-label") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.last_name.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.last_name(class="form-control form-control-md ") }}
+                                        {{ form.last_name.label(class="form-control-label") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-floating">
+                                    {% if form.dob.errors %}
+                                        {{ form.dob(class="form-control form-control-md  is-invalid") }}
+                                        {{ form.dob.label(class="form-control-label") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.dob.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.dob(class="form-control form-control-md ") }}
+                                        {{ form.dob.label(class="form-control-label") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-floating">
+                                    {% if form.address.errors %}
+                                        {{ form.address(class="form-control form-control-md  is-invalid") }}
+                                        {{ form.address.label(class="form-control-label") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.address.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.address(class="form-control form-control-md ") }}
+                                        {{ form.address.label(class="form-control-label") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-floating">
+                                    {% if form.phone.errors %}
+                                        {{ form.phone(class="form-control form-control-md  is-invalid") }}
+                                        {{ form.phone.label(class="form-control-label") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.phone.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.phone(class="form-control form-control-md ") }}
+                                        {{ form.phone.label(class="form-control-label") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-floating">
+                                    {% if form.experience.errors %}
+                                        {{ form.experience(class="form-control form-control-md is-invalid") }}
+                                        {{ form.experience.label(class="form-control-label") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.experience.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.experience(class="form-control form-control-md ") }}
+                                        {{ form.experience.label(class="form-control-label") }}
+                                    {% endif %}
+                                </div>
+                                <!-- Image -->
+                                <div class="form-group">
+                                    {{ form.image.label(class="form-control-label") }}
+                                    {% if form.image.errors %}
+                                        {{ form.image(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.image.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.image(class="form-control form-control-md ") }}
+                                    {% endif %}
+                                </div>
+                                <!-- ID Proof -->
+                                <div class="form-group">
+                                    {{ form.id_proof.label(class="form-control-label") }}
+                                    {% if form.id_proof.errors %}
+                                        {{ form.id_proof(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.id_proof.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.id_proof(class="form-control form-control-md ") }}
+                                    {% endif %}
+                                </div>
+                                <!-- Resume -->
+                                <div class="form-group">
+                                    {{ form.resume.label(class="form-control-label") }}
+                                    {% if form.resume.errors %}
+                                        {{ form.resume(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.resume.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.resume(class="form-control form-control-md ") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group mx-auto">
+                                    {{ form.submit(class="btn btn-success") }}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% elif status == "Blocked" %}
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <div class="alert alert-danger">
+                Your account has been blocked by the admin. Please contact support for further assistance.
+            </div>
+        {% elif status == "Verified" %}
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <div class="card">
+                <h4 class="card-header bg-light"><span class="badge rounded-pill bg-warning">Available</span> Requests</h4>
+                <div class="card-body">
+                    <table class="table table-responsive align-middle text-center">
+                        <thead class="table-warning">
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Address</th>
+                                <th>Instructions</th>
+                                <th>Contact</th>
+                                <th>For Date</th>
+                                <th>Expiry</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for request in service_requests %}
+                            <tr>
+                                <td>#R{{ request.id }}</td>
+                                <td>{{ request.customer.first_name }} {{request.customer.last_name }}</td>
+                                <td>{{ request.customer.address }} ({{request.customer.zipcode.zipcode }})</td>
+                                <td>{{ request.special_instructions }}</td>
+                                <td>{{ request.customer.phone }}</td>
+                                <td>
+                                    {{ request.appointment_date.strftime("%I:%M %p")}}
+                                    <br>
+                                    {{ request.appointment_date.strftime("%d-%m-%Y")}}
+                                </td>
+                                <td> 
+                                    {{ request.expiry_date.strftime("%I:%M %p") }}
+                                    <br>
+                                    {{ request.expiry_date.strftime("%d-%m-%Y") }}
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-success btn-sm d-inline" data-bs-toggle="modal" data-bs-target="#acceptRequestModal{{ request.id }}">
+                                        <i class="bi bi-check-circle-fill" style="font-size: 1.5rem"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm d-inline" data-bs-toggle="modal" data-bs-target="#ignoreRequestModal{{ request.id }}">
+                                        <i class="bi bi-x-circle-fill" style="font-size: 1.5rem"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <h4 class="card-header"><span class="badge rounded-pill bg-success">Upcoming</span> Appointments</h4>
+                <div class="card-body">
+                    <table class="table table-responsive align-middle text-center">
+                        <thead class="table-success">
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Instructions</th>
+                            <th>Contact</th>
+                            <th>Date</th>
+                            <th>Close</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for request in upcoming_appointments %}
+                            <tr>
+                            <td>#R{{ request.id }}</td>
+                            <td>{{ request.customer.first_name }} {{request.customer.last_name }}</td>
+                            <td>{{ request.customer.address }} ({{request.customer.zipcode.zipcode }})</td>
+                            <td>{{ request.special_instructions }}</td>
+                            <td>{{ request.customer.phone }}</td>
+                            <td>
+                                {{ request.appointment_date.strftime("%I:%M %p")}}
+                                <br>
+                                {{ request.appointment_date.strftime("%d-%m-%Y")}}
+                            </td>
+                            <td>
+                                {% if request.status.status == "Scheduled" and current_time() > request.appointment_date %}
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#closeRequestModal{{ request.id }}">
+                                        <i class="bi bi-check-circle-fill" style="font-size: 1.5rem"></i>
+                                    </button>
+                                {% else %}
+                                    <button type="button" class="btn btn-secondary" disabled>
+                                        <i class="bi bi-check-circle-fill" style="font-size: 1.5rem"></i>
+                                    </button>
+                                {% endif %}
+                            </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <h4 class="card-header"><span class="badge rounded-pill bg-secondary">History</span></h4>
+                <div class="card-body">
+                    <table class="table table-responsive align-middle text-center">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Address</th>
+                                <th>Instructions</th>
+                                <th>Contact</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Review</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for appointment in service_history %}
+                            <tr>
+                            <td>#R{{ appointment.id }}</td>
+                            <td>{{ appointment.customer.first_name }} {{ appointment.customer.last_name }}</td>
+                            <td>{{ appointment.customer.address }} ({{ appointment.customer.zipcode.zipcode }})</td>
+                            <td>{{ appointment.special_instructions }}</td>
+                            <td>{{ appointment.customer.phone }}</td>
+                            <td>
+                                {% if appointment.status.status=="Finished" %}
+                                <span class="badge rounded-pill bg-success">Finished</span>
+                                {% elif appointment.status.status=="Terminated" %}
+                                <span class="badge rounded-pill bg-danger">Terminated</span>
+                                {% else %}
+                                <span class="badge rounded-pill bg-warning">Invalid!!</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ appointment.appointment_date.strftime("%I:%M %p")}}
+                                <br>
+                                {{ appointment.appointment_date.strftime("%d-%m-%Y")}}
+                            </td>
+                            <td>
+                                {% if appointment.status.status=="Finished" and appointment.customer_review %}
+                                <span class="text-center d-flex flex align-items-center justify-content-center gap-1" style="font-size: 1.2rem">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    {{ appointment.customer_review[0].rating }}
+                                </span>
+                                {% endif %}
+                            </td>
+                            
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% for request in service_requests %}
+            <div class="modal fade" id="acceptRequestModal{{ request.id }}" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <form action="{{ url_for('accept_service_request', request_id=request.id) }}" method="POST">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Accept Request</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    <strong>Are you sure you want to <span class="text-success">ACCEPT</span> this service request?</strong>
+                                </p>
+                                {{ accept_form.hidden_tag() }}
+                            </div>
+                            <div class="modal-footer">
+                                {{ accept_form.submit(class="btn btn-success") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="ignoreRequestModal{{ request.id }}" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <form action="{{ url_for('ignore_service_request', request_id=request.id) }}" method="POST">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Ignore Request</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    <strong>Are you sure you want to <span class="text-danger">IGNORE</span> this service request?</strong>
+                                </p>
+                                {{ ignore_form.hidden_tag() }}
+                            </div>
+                            <div class="modal-footer">
+                                {{ ignore_form.submit(class="btn btn-danger") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% for request in upcoming_appointments %}
+            <div class="modal fade" id="closeRequestModal{{ request.id }}" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <form action="{{ url_for('close_request_professional', request_id=request.id) }}" method="POST">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Close Request</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    Thank you for your services! Please take a moment to 
+                                    share your feedback by filling out the form below.
+                                </p>
+                                {{ close_form.hidden_tag() }}
+                                <div class="d-flex flex-column gap-3">
+                                    <div class="form-group">
+                                        {{ close_form.rating.label(class="form-control-label is-invalid required-field") }}
+                                        {% if close_form.rating.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in close_form.rating.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ close_form.rating(class="form-control") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ close_form.review.label(class="form-control-label") }}
+                                        {{ close_form.review(class="form-control") }}
+                                    </div>
+                                    <div class="form-check">
+                                        {{ close_form.report.label(class="form-control-label text-danger") }}
+                                        {{ close_form.report(class="form-check-input bg-danger") }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                {{ close_form.submit(class="btn btn-success") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

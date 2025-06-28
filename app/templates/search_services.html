@@ -1,0 +1,62 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+    <div class="content-1400 mx-auto">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="list">
+            <div class="list-heading">
+                {% if current_user.is_authenticated %}
+                    <span class="list-title">Services with "{{ service_name }}" in name</span>
+                {% else %}
+                    <span class="list-title">Services with available in {{zipcode}} with "{{ service_name }}" in name</span>
+                {% endif %}
+            </div> 
+            <div class="search-items">
+                {% for service in services %}
+                    {% if current_user.is_authenticated %}
+                        {% set zipcode_ids = service.zipcodes | map(attribute='id') | list %}
+                        {% if current_user.customer[0].zipcode.id in zipcode_ids %}
+                            <a class="service-tile card" href="{{url_for('service_request', service_id=service.id)}}">
+                                <img class="service-img card-img-top" src="{{ url_for('static', filename=service.image) }}" alt="{{ service.name }}">
+                                <div class="card-body px-0">
+                                    <h6 class="card-title">{{ service.name }}</h6>
+                                    <div class="d-flex gap-1"><i class="bi bi-stopwatch"></i>{{ service.estimated_duration }}mins</div>
+                                    <div class="d-flex gap-1"><i class="bi bi-currency-rupee"></i>{{ service.base_price }}</div>
+                                </div>
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a class="service-tile card" href="{{url_for('service_request', service_id=service.id)}}">
+                            <img class="service-img card-img-top" src="{{ url_for('static', filename=service.image) }}" alt="{{ service.name }}">
+                            <div class="card-body px-0">
+                                <h6 class="card-title">{{ service.name }}</h6>
+                                <div class="d-flex gap-1"><i class="bi bi-stopwatch"></i>{{ service.estimated_duration }}mins</div>
+                                <div class="d-flex gap-1"><i class="bi bi-currency-rupee"></i>{{ service.base_price }}</div>
+                            </div>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="banner">
+            <img src="{{url_for('static', filename='banners/ro_banner.webp')}}" alt="">
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

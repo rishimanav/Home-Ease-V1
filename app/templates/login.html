@@ -1,0 +1,81 @@
+{% extends "boilerplate.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+  <div class="content-400 align-self-center flex-grow-1 justify-content-center">
+      <div class="flash-messages">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                  {% for category, message in messages %}
+                      <div class="alert alert-{{ category }}">
+                          {{ message }}
+                      </div>
+                  {% endfor %}
+              {% endif %}
+          {% endwith %}
+      </div>
+      <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Login to HomeEase</h5>
+        </div>
+        <div class="card-body">
+            <p>
+                Enter your email address and password to access your HomeEase account.
+            </p>
+            <form id="login" action="" method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="d-flex flex-column gap-3">
+                    <div class="form-floating">
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control form-control-md  is-invalid") }}
+                            {{ form.email.label(class="form-control-label") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control form-control-md ") }}
+                            {{ form.email.label(class="form-control-label") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-floating">
+                        {% if form.password.errors %}
+                            {{ form.password(class="form-control form-control-md  is-invalid") }}
+                            {{ form.password.label(class="form-control-label") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.password(class="form-control form-control-md ") }}
+                            {{ form.password.label(class="form-control-label") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-check">
+                        {{ form.remember(class="form-check-input") }}
+                        {{ form.remember.label(class="form-check-label") }}
+                    </div>
+                    <div class="form-group mx-auto">
+                        {{ form.submit(class="btn btn-success") }}
+                    </div>
+                    <small class="text-muted mx-auto">
+                        <a href="#">Forgot Password?</a>
+                    </small>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted text-center">
+                <div>Need An Account?</div>
+                <div><a class="ml-2" href="{{ url_for('signup_customer') }}">For Customers</a></div>
+                <div><a class="ml-2" href="{{ url_for('signup_professional_zipcode') }}">Want to work @HomeEase?</a></div>
+            </small>
+        </div>
+      </div>
+  </div>
+{% endblock %}

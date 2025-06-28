@@ -1,0 +1,83 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Service
+{% endblock %}
+
+{% block content %}
+    <div class="content-600 align-self-center">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Edit Category - {{ category.name }}</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    Update the category details or delete the category from the database. 
+                    Ensure that the information provided is correct before updating.
+                </p>
+                <form id="edit-category-form" method="POST" enctype="multipart/form-data">
+                    {{ form_edit.hidden_tag() }}
+                    <input type="hidden" name="form_name" value="edit_category">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="form-floating">
+                            {% if form_edit.name.errors %}
+                                {{ form_edit.name(class="form-control form-control-md is-invalid") }}
+                                {{ form_edit.name.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_edit.name.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form_edit.name(class="form-control form-control-md") }}
+                                {{ form_edit.name.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
+                            {% if form_edit.description.errors %}
+                                {{ form_edit.description(class="form-control form-control-md is-invalid") }}
+                                {{ form_edit.description.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_edit.description.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form_edit.description(class="form-control form-control-md") }}
+                                {{ form_edit.description.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group mx-auto">
+                            {{ form_edit.submit(class="btn btn-success") }}
+                        </div>
+                    </div>
+                </form>
+                <hr>
+                <p class="text-danger">
+                    <strong>Please note that once you delete a category, it can't be undone.</strong>
+                </p>
+                <form id="delete-category-form" method="POST">
+                    {{ form_delete.hidden_tag() }}
+                    <input type="hidden" name="form_name" value="delete_category">
+                    <div class="form-group text-center">
+                        {{ form_delete.submit(class="btn btn-danger") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

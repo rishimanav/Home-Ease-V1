@@ -1,0 +1,275 @@
+html{
+    --navbar-dark: #131921;
+    --body-white: #f4f4f4;
+    --green: #75b886;
+    --footer-blue: #dbebfd;
+    --footer-dark: #232F3E;
+    height: 100%
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: var(--body-white);
+    padding-top: 74px;
+    min-height: 100%;
+}
+
+/* css for <section> or main-content of a page */
+.main-content{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 50px 10px 10px;
+}
+
+/* css to limit the width of the content to 1400px */
+.content-1400{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 1400px;
+    padding: 10px;
+    /* align-self: center; */
+}
+
+.content-800{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 800px;
+    padding: 10px;
+}
+
+/* css to limit the width of the content to 600px */
+.content-700{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 700px;
+    padding: 10px;
+}
+
+
+/* css to limit the width of the content to 600px */
+.content-600{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+}
+
+/* css to limit the width of the content to 400px */
+.content-400{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    /* align-self: center; */
+}
+
+.h-500{
+    height:500px;
+}
+
+/* css for displaying flash messages*/
+.flash-messages{
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+/* SCROLLBARS -------------------------------- */
+::-webkit-scrollbar {
+    width: 14px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: grey;
+    border: 2px solid transparent;
+    border-radius: 9px;
+    background-clip: content-box;
+}
+
+.list-items::-webkit-scrollbar-thumb {
+    background-color: var(--navbar-dark);
+    border: 5px solid transparent;
+    border-radius: 9px;
+    background-clip: content-box;
+}
+
+
+/* COMPONENT CSS ----------------------------- */
+.form-container{
+    background: #ffffff;
+    padding: 10px 20px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    margin: 10px 0px;
+}
+
+/* a list element, flex column, consists 
+of a list heading and list elements*/
+.list{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* a list heading comprises of a list title,
+which describes the list and an info link,
+like "See more".*/
+.list-heading{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.list-title{
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.info-link{
+    color: black ;
+    font-size: 15px;
+    font-style: italic;
+    text-decoration: none;
+
+}
+
+.info-link:hover{
+    color: black ;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+.list-items{
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    overflow-x: auto;
+}
+
+.service-tile{
+    text-decoration: none;
+    border: 0;
+    background-color: transparent;
+    /* width: 235px; */
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.category-tile{
+    align-self: center;
+    text-decoration: none;
+    height: 180px;
+    width: 250px;
+    box-shadow: 2px 2px 3px lightgrey;
+    border-radius: 10px;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.table-responsive{
+    max-height: 400px;
+}
+
+.professional-tile{
+    align-self: center;
+    text-decoration: none;
+    height: 180px;
+    width: 250px;
+    box-shadow: 2px 2px 3px lightgrey;
+    border-radius: 10px;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.add-img{
+    height: 200px;
+    width: 200px;
+    text-align: center;
+    box-shadow: 2px 2px 3px lightgrey;
+    border-radius: 10px;
+}
+
+.service-img{
+    height:175px;
+    width:175px;
+    text-align: center;
+    box-shadow: 2px 2px 3px lightgrey;
+    border-radius: 10px;
+}
+
+.offer-tile{
+    text-decoration: none;
+    border: 0;
+    background-color: transparent;
+    width: 250px;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.offer-tile img{
+    height:141px;
+    width:250px;
+    text-align: center;
+    box-shadow: 2px 2px 3px lightgrey;
+    border-radius: 5px;
+}
+
+.banner{
+    text-align: center;
+    max-width: 1200px;
+    align-self: center;
+}
+
+.banner img{
+    border-radius: 20px;
+    width: 100%;
+}
+
+.service-content{
+    margin: 0px auto;
+    padding: 50px 10px 10px;
+}
+
+.service-info{
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+    gap: 1.25rem;
+    justify-content: center;
+    align-self: center;
+}
+
+.service-form{
+    width: 100%;
+    flex-grow: 1;
+    padding: 0px;
+    /* padding: 10px;
+    margin: 10px; */
+    background: transparent;
+    border: 0;
+}
+
+.required-field::after {
+    content: "*";
+    color: red;
+    margin-left: 2px;
+}

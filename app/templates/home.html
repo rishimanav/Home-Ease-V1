@@ -1,0 +1,58 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+    <div class="content-1400 mx-auto">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="banner">
+            <img src="{{url_for('static', filename='banners/ro_banner.webp')}}" alt="">
+        </div>
+        {% for category in categories %}
+        <div class="list">
+            <div class="list-heading">
+                <span class="list-title">{{ category.name }}</span>
+                <a class="info-link" href="">See more</a>
+            </div> 
+            <div class="list-items">
+                {% for service in category.services %}
+                <a class="service-tile card" href="{{url_for('service_request', service_id=service.id)}}">
+                    <img class="service-img card-img-top" src="{{ url_for('static', filename=service.image) }}" alt="{{ service.name }}">
+                    <div class="card-body px-0">
+                        <h6 class="card-title">{{ service.name }}</h6>
+                        <div class="d-flex gap-1"><i class="bi bi-stopwatch"></i>{{ service.estimated_duration }}mins</div>
+                        <div class="d-flex gap-1"><i class="bi bi-currency-rupee"></i>{{ service.base_price }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        <div class="list">
+            <div class="list-heading">
+                <span class="list-title">Latest offers</span>
+                <a class="info-link" href="">See more</a>
+            </div> 
+            <div class="list-items">
+                <a class="offer-tile" href="/offer">
+                    <img class="offer-img" src="{{url_for('static', filename='packages/ac_offer.webp')}}" alt="...">
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

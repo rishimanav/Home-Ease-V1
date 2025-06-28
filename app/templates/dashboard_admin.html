@@ -1,0 +1,383 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+    <div class="content-1400 mx-auto">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="list">
+            <h4 class="mb-0 mx-1">Categories</h4>
+            <div class="list-items">
+                <a class="service-tile" href="" data-bs-toggle="modal" data-bs-target="#category-form-modal">
+                    <img class="service-img" src="{{ url_for('static', filename='assets/add.png') }}" alt="">
+                </a>
+                {% for category in categories %}
+                <a class="category-tile card" href="/admin/edit-category/{{ category.id }}">
+                    <div class="card-body px-0">
+                        <h6 class="card-title">{{ category.name }}</h6>
+                        <p class="card-text">{{ category.description }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="list">
+            <h4 class="mb-0 mx-1">Services</h4>
+            <div class="list-items">
+                <a class="service-tile" href="" data-bs-toggle="modal" data-bs-target="#service-form-modal">
+                    <img class="service-img" src="{{ url_for('static', filename='assets/add.png') }}" alt="">
+                </a>
+                {% for service in services %}
+                <a class="service-tile card" href="/admin/edit-service/{{ service.id }}">
+                    <img class="service-img card-img-top" src="{{ url_for('static', filename=service.image) }}" alt="{{ service.name }}">
+                    <div class="card-body px-0">
+                        <h6 class="card-title">{{ service.name }}</h6>
+                        <div class="d-flex gap-1"><i class="bi bi-stopwatch"></i>{{ service.estimated_duration }}mins</div>
+                        <div class="d-flex gap-1"><i class="bi bi-currency-rupee"></i>{{ service.base_price }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <div class="content-600">
+                <div class="card h-500">
+                    <h4 class="card-header"><span class="badge rounded-pill bg-warning">Pending</span> Applications</h4>
+                    <div class="card-body table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Service</th>
+                                    <th>Zipcode</th>
+                                    <th>View</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in pending_requests %}
+                                <tr>
+                                    <td>{{ request.professional.first_name }} {{ request.professional.last_name }}</td>
+                                    <td>{{ request.professional.service.name }}</td>
+                                    <td>{{ request.professional.zipcode.zipcode }}</td>
+                                    <!-- <td>
+                                        <a href="{{ url_for('static', filename=request.professional.profile_img) }}" target="_blank" class="btn btn-primary btn-sm">View</a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('static', filename=request.professional.id_proof) }}" target="_blank" class="btn btn-primary btn-sm">View</a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('static', filename=request.professional.resume) }}" target="_blank" class="btn btn-primary btn-sm">View</a>
+                                    </td>-->
+                                    <td> 
+                                        <!-- <form action="{{ url_for('dashboard_admin') }}" method="POST" style="display: inline;">
+                                            {{ verify_form.hidden_tag() }}
+                                            <input id="form_name" type="hidden" name="form_name" value="verify_form">
+                                            <input id="request_id" type="hidden" name="request_id" value="{{ request.id }}">
+                                            <button type="submit" class="btn btn-outline-success btn-sm" style="font-size:1.5rem">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal{{ request.id }}"> -->
+                                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewApplicationModal{{ request.id }}">
+                                            <i class="bi bi-person-circle border-0" style="font-size:1.5rem"></i>
+                                        </button>
+                                    </td>
+                                    <td> 
+                                        <span class="badge rounded-pill bg-warning text-dark">
+                                            {{ request.status.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="category-form-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Add Category Form</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <form id="add-category-form" method="POST" enctype="multipart/form-data">
+                    {{ add_category_form.hidden_tag() }}
+                    <input type="hidden" name="form_name" value="add_category">
+                    <div class="d-flex flex-column gap-3">
+                        <p>
+                            Please fill in the details for the new category, ensuring the name is unique, before
+                            adding any new services of the category to the application.
+                        </p>
+                        <div class="form-floating">
+                            {% if add_category_form.name.errors %}
+                                {{ add_category_form.name(class="form-control form-control-md  is-invalid") }}
+                                {{ add_category_form.name.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in add_category_form.name.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ add_category_form.name(class="form-control form-control-md ") }}
+                                {{ add_category_form.name.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
+                            {% if add_category_form.description.errors %}
+                                {{ add_category_form.description(class="form-control form-control-md  is-invalid") }}
+                                {{ add_category_form.description.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in add_category_form.description.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ add_category_form.description(class="form-control form-control-md ") }}
+                                {{ add_category_form.description.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group mx-auto">
+                            {{ add_category_form.submit(class="btn btn-success") }}
+                        </div>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="service-form-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Service Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Please fill in the details for the new service, ensuring the name is unique 
+                        and the category is correctly selected. You may also upload an image to represent this service.
+                    </p>
+                    <form id="add-service-form" method="POST" enctype="multipart/form-data">
+                        {{ add_service_form.hidden_tag() }}
+                        <input type="hidden" name="form_name" value="add_service">
+                        <div class="d-flex flex-column gap-3">
+                            <div class="form-floating">
+                                {% if add_service_form.name.errors %}
+                                    {{ add_service_form.name(class="form-control form-control-md is-invalid") }}
+                                    {{ add_service_form.name.label(class="form-control-label") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in add_service_form.name.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ add_service_form.name(class="form-control form-control-md") }}
+                                    {{ add_service_form.name.label(class="form-control-label") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-floating">
+                                {% if add_service_form.description.errors %}
+                                    {{ add_service_form.description(class="form-control form-control-md is-invalid") }}
+                                    {{ add_service_form.description.label(class="form-control-label") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in add_service_form.description.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ add_service_form.description(class="form-control form-control-md") }}
+                                    {{ add_service_form.description.label(class="form-control-label") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-floating">
+                                {% if add_service_form.base_price.errors %}
+                                    {{ add_service_form.base_price(class="form-control form-control-md is-invalid") }}
+                                    {{ add_service_form.base_price.label(class="form-control-label") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in add_service_form.base_price.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ add_service_form.base_price(class="form-control form-control-md") }}
+                                    {{ add_service_form.base_price.label(class="form-control-label") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-floating">
+                                {% if add_service_form.estimated_duration.errors %}
+                                    {{ add_service_form.estimated_duration(class="form-control form-control-md is-invalid") }}
+                                    {{ add_service_form.estimated_duration.label(class="form-control-label") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in add_service_form.estimated_duration.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ add_service_form.estimated_duration(class="form-control form-control-md") }}
+                                    {{ add_service_form.estimated_duration.label(class="form-control-label") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-floating">
+                                {% if add_service_form.category_id.errors %}
+                                    {{ add_service_form.category_id(class="form-control form-control-md is-invalid") }}
+                                    {{ add_service_form.category_id.label(class="form-control-label") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in add_service_form.category_id.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ add_service_form.category_id(class="form-control form-control-md") }}
+                                    {{ add_service_form.category_id.label(class="form-control-label") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-floating">
+                                {% if add_service_form.zipcodes.errors %}
+                                    {{ add_service_form.zipcodes(class="form-control form-control-md is-invalid") }}
+                                    {{ add_service_form.zipcodes.label(class="form-control-label") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in add_service_form.zipcodes.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ add_service_form.zipcodes(class="form-control form-control-md") }}
+                                    {{ add_service_form.zipcodes.label(class="form-control-label") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group d-flex flex-column gap-1">
+                                {{ add_service_form.image.label(class="form-control-label") }}
+                                {% if add_service_form.image.errors %}
+                                    {{ add_service_form.image(class="form-control-file form-control-md is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in add_service_form.image.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ add_service_form.image(class="form-control-file form-control-md") }}
+                                {% endif %}
+                                <!-- <label for="image">Upload Image</label>
+                                {{ add_service_form.image(class="form-control-file") }} -->
+                            </div>
+                            <div class="form-group mx-auto">
+                                {{ add_service_form.submit(class="btn btn-success") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% for request in pending_requests %}
+    <div class="modal fade" id="viewApplicationModal{{ request.id }}" tabindex="-1" aria-labelledby="viewApplicationModal{{ request.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectModalLabel{{ request.id }}">Review Application</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Please review the following professional application. If all credentials are in order, click verify,
+                        else put in the comments, what's missing and hit reject, so that the applicant can re-enter details.
+                    </p>
+                    <div class="d-flex gap-3 align-items-center">
+                        <img class="rounded" src="{{url_for('static', filename=request.professional.profile_img)}}" alt="">
+                        <div class="d-flex flex-column gap-2">
+                            <div><strong>Name: </strong> {{request.professional.first_name}} {{request.professional.last_name}}</div>
+                            <div><strong>Service: </strong> {{request.professional.service.name}}</div>
+                            <div><strong>DOB: </strong> {{request.professional.dob.strftime("%d-%m-%Y")}}</div>
+                            <div><strong>Phone: </strong> {{request.professional.phone}}</div>
+                            <div><strong>Add: </strong> {{request.professional.address}}</div>
+                            <div><strong>Experience: </strong> {{request.professional.experience}}</div>
+                            <div><strong>Documents: </strong>
+                                <a href="{{ url_for('static', filename=request.professional.resume) }}" target="_blank" class="btn btn-info btn-sm">
+                                    <i class="bi bi-file-earmark-person-fill" style="font-size:1.2rem"></i>
+                                </a>
+                                <a href="{{ url_for('static', filename=request.professional.id_proof) }}" target="_blank" class="btn btn-info btn-sm">
+                                    <i class="bi bi-person-vcard" style="font-size:1.2rem"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <form action="{{ url_for('dashboard_admin') }}" method="POST" style="display: inline;">
+                            {{ verify_form.hidden_tag() }}
+                            <input id="form_name" type="hidden" name="form_name" value="verify_form">
+                            <input id="request_id" type="hidden" name="request_id" value="{{ request.id }}">
+
+                            {{ verify_form.submit(class="btn btn-success")}}
+                        </form>
+                    </div>
+                    <hr>
+                    <form class="d-flex flex-column gap-3" action="{{ url_for('dashboard_admin') }}" method="POST" enctype="multipart/form-data">
+                        {{ reject_form.hidden_tag() }}
+                        <input id="form_name" type="hidden" name="form_name" value="reject_form">
+                        <input id="request_id" type="hidden" name="request_id" value="{{ request.id }}">
+                        <div class="form-group">
+                            {{ reject_form.comments.label(class="form-control-label") }}
+                            {% if reject_form.comments.errors %}
+                            {{ reject_form.comments(class="form-control form-control-md  is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in reject_form.comments.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ reject_form.comments(class="form-control form-control-md ") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group mx-auto">
+                            {{reject_form.submit(class="btn btn-danger")}}
+                        </div>
+                    </form>
+                </div>
+                <!-- <form action="{{ url_for('process_application', request_id=request.id) }}" method="POST" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectModalLabel{{ request.id }}">Reject Application</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        
+                   
+                        <input type="hidden" name="action" value="reject">
+                        <textarea name="comments" class="form-control" placeholder="Enter rejection comments" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+                    </div>
+                </form> -->
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

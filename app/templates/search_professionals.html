@@ -1,0 +1,150 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+    <div class="content-1400 mx-auto">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="card">
+            <h4 class="card-header">
+                Search Professionals 
+                <br>
+                <span>(name like "{{input_name}}", email like "{{input_email}}", zipcode like "{{input_zipcode}}")</span>
+            </h4>
+            <div class="card-body table-responsive">
+                <table class="table align-middle text-center">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Service</th>
+                            <th>Zipcode</th>
+                            <th>Reports</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for professional in professionals %}
+                        <tr>
+                            <td>{{ professional.first_name }} {{ professional.last_name }}</td>
+                            <td>{{ professional.service.name }}</td>
+                            <td>{{ professional.zipcode.zipcode }}</td>
+                            <td>{{ professional.user.reports }}</td>
+                            <td> 
+                                <button type="button" class="btn btn-primary btn-sm d-inline" data-bs-toggle="modal" data-bs-target="#viewProfessionalModal{{ professional.id }}">
+                                    <i class="bi bi-person-circle" style="font-size:1.5rem"></i>
+                                </button>
+                                {% if not professional.is_blocked %}
+                                <button type="button" class="btn btn-danger btn-sm d-inline" data-bs-toggle="modal" data-bs-target="#blockProfessionalModal{{ professional.id }}">
+                                    <i class="bi bi-person-fill-x" style="font-size:1.5rem"></i>
+                                </button>
+                                {% else %}
+                                <button type="button" class="btn btn-primary btn-sm d-inline" data-bs-toggle="modal" data-bs-target="#unblockProfessionalModal{{ professional.id }}">
+                                    <i class="bi bi-person-fill-check" style="font-size:1.5rem"></i>
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% for professional in professionals %}
+    <div class="modal fade" id="viewProfessionalModal{{ professional.id }}" tabindex="-1" aria-labelledby="viewProfessionalModal{{ professional.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewProfessionalModal{{ professional.id }}">Review Professional</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Please review the following professional application before performing any operations.
+                    </p>
+                    <div class="d-flex gap-3 align-items-center">
+                        <img class="rounded" src="{{url_for('static', filename=professional.profile_img)}}" alt="">
+                        <div class="d-flex flex-column gap-2">
+                            <div><strong>Name: </strong> {{professional.first_name}} {{professional.last_name}}</div>
+                            <div><strong>Service: </strong> {{professional.service.name}}</div>
+                            <div><strong>DOB: </strong> {{professional.dob.strftime("%d-%m-%Y")}}</div>
+                            <div><strong>Phone: </strong> {{professional.phone}}</div>
+                            <div><strong>Add: </strong> {{professional.address}}</div>
+                            <div><strong>Experience: </strong> {{professional.experience}}</div>
+                            <div><strong>Documents: </strong>
+                                <a href="{{ url_for('static', filename=professional.resume) }}" target="_blank" class="btn btn-info btn-sm">
+                                    <i class="bi bi-file-earmark-person-fill" style="font-size:1.2rem"></i>
+                                </a>
+                                <a href="{{ url_for('static', filename=professional.id_proof) }}" target="_blank" class="btn btn-info btn-sm">
+                                    <i class="bi bi-person-vcard" style="font-size:1.2rem"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+        {% if not professional.is_blocked %}
+        <div class="modal fade" id="blockProfessionalModal{{ professional.id }}" tabindex="-1" aria-labelledby="blockProfessionalModal{{ professional.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewProfessionalModal{{ professional.id }}">Block Professional</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Are you sure that you want to block the following professional?
+                        </p>
+                        <form action="{{url_for('toggle_block_professional', professional_id=professional.id)}}" method="POST">
+                            <button type="submit" class="btn btn-danger mt-2 ms-auto">Block</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="modal fade" id="unblockProfessionalModal{{ professional.id }}" tabindex="-1" aria-labelledby="unblockProfessionalModal{{ professional.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewProfessionalModal{{ professional.id }}">Unblock Professional</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Are you sure that you want to unblock the following professional?
+                        </p>
+                        <form action="{{url_for('toggle_block_professional', professional_id=professional.id)}}" method="POST">
+                            <button type="submit" class="btn btn-danger mt-2 ms-auto">Un-Block</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    {% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

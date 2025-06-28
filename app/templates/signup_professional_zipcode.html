@@ -1,0 +1,49 @@
+{% extends "boilerplate.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+  <div class="content-400 align-self-center flex-grow-1 justify-content-center">
+      <div class="flash-messages">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                  {% for category, message in messages %}
+                      <div class="alert alert-{{ category }}">
+                          {{ message }}
+                      </div>
+                  {% endfor %}
+              {% endif %}
+          {% endwith %}
+      </div>
+      <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Select Your Working Zipcode</h5>
+        </div>
+        <div class="card-body">
+            <p>
+                Please enter the zipcode where you intend to offer your services. The services you can
+                apply for depends on the zipcode you choose now.
+            </p>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="d-flex flex-column gap-3">
+                    <div class="form-floating mb-3">
+                        {{ form.zipcode(class="form-control") }}
+                        <label for="zipcode">Zipcode</label>
+                        {% if form.zipcode.errors %}
+                            <div class="text-danger mt-1">
+                                {{ form.zipcode.errors[0] }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group text-end">
+                        {{ form.submit(class="btn btn-success") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+      </div>
+  </div>
+{% endblock %}

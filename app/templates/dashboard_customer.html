@@ -1,0 +1,279 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+    <div class="content-1400 mx-auto">
+        <h3 class="text-secondary">Hi {{current_user.customer[0].first_name}} {{current_user.customer[0].last_name}}!</h3>
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="d-flex">
+            <div class="content-600">
+                <p class="alert alert-info">
+                    We don't want you to keep waiting till the last minute. 
+                    Your request expires post 15 mins from your booking time
+                    if no professional accepts it. 
+                </p>
+                <div class="card h-500">
+                    <h4 class="card-header"><span class="badge rounded-pill bg-warning">Pending</span> Requests</h4>
+                    <div class="card-body table-responsive">
+                        <table class="table align-middle text-center">
+                            <thead class="table-warning">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Service</th>
+                                    <th>For Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in pending_requests %}
+                                <tr>
+                                    <td>#R{{ request.id }}</td>
+                                    <td>{{ request.service.name }}</td>
+                                    <td class="text-center">
+                                        {{ request.appointment_date.strftime("%I:%M %p")}}
+                                        <br>
+                                        {{ request.appointment_date.strftime("%d-%m-%y")}}
+                                    </td>
+                                    <td> 
+                                        <a type="button" class="btn btn-outline-primary btn-sm d-inline" href="{{url_for('edit_pending_request', request_id=request.id)}}">
+                                            <i class="bi bi-pencil-square" style="font-size: 1.5rem"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm d-inline" data-bs-toggle="modal" data-bs-target="#terminateModal{{ request.id }}">
+                                            <i class="bi bi-calendar-x-fill" style="font-size: 1.5rem"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="content-800">
+                <div class="card h-500">
+                    <h4 class="card-header"><span class="badge rounded-pill bg-success">Scheduled</span> Requests</h4>
+                    <div class="card-body table-responsive ">
+                        <table class="table align-middle text-center">
+                            <thead class="table-success">
+                            <tr>
+                                <th>ID</th>
+                                <th>Service</th>
+                                <th>Date</th>
+                                <th>Professional</th>
+                                <th>Contact</th>
+                                <th>Terminate/Close</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for appointment in upcoming_appointments %}
+                                <tr>
+                                <td>#R{{ appointment.id }}</td>
+                                <td>{{ appointment.service.name }}</td>
+                                <td>
+                                    {{ appointment.appointment_date.strftime("%I:%M %p")}}
+                                    <br>
+                                    {{ appointment.appointment_date.strftime("%d-%m-%y")}}
+                                </td>
+                                <td>{{ appointment.professional.first_name }} {{appointment.professional.last_name }}</td>
+                                <td>{{ appointment.customer.phone }}</td>
+                                <td>
+                                    {% if appointment.appointment_date - current_time() > timedelta(minutes=15) %}
+                                    <button type="button" class="btn btn-outline-danger btn-sm d-inline" data-bs-toggle="modal" data-bs-target="#terminateModal{{ appointment.id }}">
+                                        <i class="bi bi-calendar-x-fill" style="font-size: 1.5rem"></i>
+                                    </button>
+                                    {% else %}
+                                    <button type="button" class="btn btn-outline-secondary btn-sm d-inline" disabled>
+                                        <i class="bi bi-calendar-x-fill" style="font-size: 1.5rem"></i>
+                                    </button>
+                                    {% endif %}
+                                </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <p class="alert alert-info">
+                    Please take a moment to rate and tell us about your experience 
+                    with our service professional through the review form link.
+                </p>
+                <div class="card h-500">
+                    <h4 class="card-header"><span class="badge rounded-pill bg-secondary text-white">History</span></h4>
+                    <div class="card-body table-responsive">
+                        <table class="table align-middle text-center">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Service</th>
+                                    <th>Professional</th>
+                                    <th>Contact</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Review</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for appointment in previous_appointments %}
+                                <tr>
+                                <td>#R{{ appointment.id }}</td>
+                                <td>{{ appointment.service.name }}</td>
+                                <td>{{ appointment.professional.first_name }}{{ appointment.professional.last_name }}</td>
+                                <td>{{ appointment.professional.phone }}</td>
+                                <td>
+                                    {% if appointment.status.status=="Expired" %}
+                                    <span class="badge rounded-pill bg-secondary">Expired</span>
+                                    {% elif appointment.status.status=="Finished" %}
+                                    <span class="badge rounded-pill bg-success">Finished</span>
+                                    {% elif appointment.status.status=="Terminated" %}
+                                    <span class="badge rounded-pill bg-danger">Terminated</span>
+                                    {% else %}
+                                    <span class="badge rounded-pill bg-danger">Invalid!!</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ appointment.appointment_date.strftime("%I:%M %p")}}
+                                    <br>
+                                    {{ appointment.appointment_date.strftime("%d-%m-%Y")}}
+                                </td>
+                                <td>
+                                    {% if appointment.status.status=="Finished" and not appointment.professional_review %}
+                                    <button type="button" class="btn btn-outline-danger btn-sm d-inline" data-bs-toggle="modal" data-bs-target="#reviewModal{{ appointment.id }}">
+                                        <i class="bi bi-star-fill" style="font-size: 1.5rem"></i>
+                                    </button>
+                                    {% elif appointment.status.status=="Finished" and appointment.professional_review %}
+                                    <span class="text-center d-flex flex align-items-center justify-content-center gap-1" style="font-size: 1.2rem">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        {{ appointment.professional_review[0].rating }}
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    {% for request in pending_requests %}
+    <div class="modal fade" id="terminateModal{{ request.id }}" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+            <form action="{{ url_for('terminate_request', request_id=request.id) }}" method="POST">
+              <div class="modal-header">
+                <h5 class="modal-title">Terminate Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                {{ terminate_form.hidden_tag() }}
+                <p>
+                    <strong>Caution:</strong> 
+                    Once the service request gets terminated, you won't be able to undo the operation.
+                </p>
+              </div>
+              <div class="modal-footer">
+                {{ terminate_form.submit(class="btn btn-danger ms-auto") }}
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% for appointment in upcoming_appointments %}
+        {% if appointment.appointment_date - current_time() > timedelta(minutes=15) %}
+            <div class="modal fade" id="terminateModal{{ appointment.id }}" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <form action="{{ url_for('terminate_request', request_id=appointment.id) }}" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Terminate Request</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ terminate_form.hidden_tag() }}
+                        <p>
+                            <strong>Caution:</strong> 
+                            Once the service request gets terminated, you won't be able to undo the operation.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        {{ terminate_form.submit(class="btn btn-danger ms-auto") }}
+                    </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {% for appointment in previous_appointments %}
+        {% if appointment.status.status=="Finished" %}
+            <div class="modal fade" id="reviewModal{{ appointment.id }}" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <form action="{{ url_for('close_request_customer', request_id=appointment.id) }}" method="POST">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Close Request</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    Thank you for choosing HomeEase for your home needs! Please take a moment to 
+                                    share your feedback by filling out the form below.
+                                </p>
+                                {{ close_form.hidden_tag() }}
+                                <div class="d-flex flex-column gap-3">
+                                    <div class="form-group">
+                                        {{ close_form.rating.label(class="form-control-label is-invalid required-field") }}
+                                        {% if close_form.rating.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in close_form.rating.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ close_form.rating(class="form-control") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ close_form.review.label(class="form-control-label") }}
+                                        {{ close_form.review(class="form-control") }}
+                                    </div>
+                                    <div class="form-check">
+                                        {{ close_form.report.label(class="form-control-label text-danger") }}
+                                        {{ close_form.report(class="form-check-input bg-danger") }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                {{ close_form.submit(class="btn btn-success") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

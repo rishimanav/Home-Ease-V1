@@ -1,0 +1,106 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Service
+{% endblock %}
+
+{% block content %}
+    <div class="content-1400 service-content">
+        <div class="service-info">
+            <div class="content-400">
+                <div class="card p-0">
+                    <h5 class="card-header">What You Get!</h5>
+                    <div class="card-body px-4">
+                        <span class="d-flex gap-2 align-items-center justify-content-end">
+                            <h5 class="card-heading">Description</h5>
+                            <h6 class="card-subtitle d-flex gap-1 mb-1">(4.9<i class="bi bi-star-fill text-warning"></i>)</h6>
+                        </span>
+                        <span class="d-flex gap-4 text-muted justify-content-end">
+                            <h5 class="card-subtitle d-flex text-success"><i class="bi bi-currency-rupee"></i>{{ service.base_price }}*</h5>
+                            <h5 class="card-subtitle d-flex gap-1 text-success"><i class="bi bi-stopwatch-fill"></i>{{ service.estimated_duration }} mins</h5>
+                        </span>
+                        <span class="text-danger text-end d-flex flex-column mt-1" style="font-style:italic">
+                            <span>*excluding cost of extra parts used, if any.</span>
+                            <span>*excluding taxes.</span>
+                        </span>
+                        <p class="card-text mt-2" style="text-align:justify;">
+                            {{ service.description }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="content-600">
+                <div class="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="service-form card">
+                    <h4 class="card-heading text-success">Book a {{ service.name }} Appointment</h4>
+                    <h5 class="">({{ service.category.name }})</h5>
+                    <form id="service-request" method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex gap-3">
+                                <div class="form-floating">
+                                    {% if form.appointment_date.errors %}
+                                        {{ form.appointment_date(class="form-control form-control-md is-invalid", style="width: 200px") }}
+                                        {{ form.appointment_date.label(class="form-control-label") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.appointment_date.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.appointment_date(class="form-control form-control-md ", style="width: 200px") }}
+                                        {{ form.appointment_date.label(class="form-control-label") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-floating">
+                                    {% if form.payment_type.errors %}
+                                        {{ form.payment_type(class="form-control form-control-md is-invalid", style="width: 200px") }}
+                                        {{ form.payment_type.label(class="form-control-label") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.payment_type.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.payment_type(class="form-control form-control-md ", style="width: 200px") }}
+                                        {{ form.payment_type.label(class="form-control-label") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-floating">
+                                {% if form.special_instructions.errors %}
+                                    {{ form.special_instructions(class="form-control form-control-md  is-invalid") }}
+                                    {{ form.special_instructions.label(class="form-control-label") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.special_instructions.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.special_instructions(class="form-control form-control-md ") }}
+                                    {{ form.special_instructions.label(class="form-control-label") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group me-auto">
+                                {{ form.submit(class="btn btn-warning") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

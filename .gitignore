@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Venv and related
+Pipfile
+Pipfile.lock
+requirements.txt
+
+# Data
+professional_data.xlsx
+professional_images.psd
+credentials.txt
+
+# Checklists
+questions.docx
+submission_pointers.docx
+
+# Submissions
+"21f1002476_MAD-1 Project Report.docx"
+"21f1002476_MAD-1 Project Report.pdf"
+
+# Database
+instance/

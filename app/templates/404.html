@@ -1,0 +1,13 @@
+{% extends "boilerplate.html" %}
+{% block styles %}
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/access.css') }}"
+  />
+{% endblock%} 
+
+{% block title %} 404 Page {% endblock %} 
+
+{% block content %}
+    404 PAGE NOT FOUND
+{% endblock %}

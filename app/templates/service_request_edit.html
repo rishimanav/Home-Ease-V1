@@ -1,0 +1,89 @@
+{% extends "boilerplate.html" %} 
+
+{% block title %}
+Service
+{% endblock %}
+
+{% block content %}
+    <div class="content-600 align-self-center">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Edit Request</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    Update the service request details and ensure that the information is 
+                    correct before updating. 
+                </p>
+
+                <form method="POST" action="" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <div class="d-flex flex-column gap-3">                       
+                        <div class="d-flex gap-3">
+                            <div class="form-floating">
+                                {% if form.appointment_date.errors %}
+                                    {{ form.appointment_date(class="form-control form-control-md is-invalid", style="width: 200px") }}
+                                    {{ form.appointment_date.label(class="form-control-label") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.appointment_date.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.appointment_date(class="form-control form-control-md ", style="width: 200px") }}
+                                    {{ form.appointment_date.label(class="form-control-label") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-floating">
+                                {% if form.payment_type.errors %}
+                                    {{ form.payment_type(class="form-control form-control-md is-invalid", style="width: 200px") }}
+                                    {{ form.payment_type.label(class="form-control-label") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.payment_type.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.payment_type(class="form-control form-control-md ", style="width: 200px") }}
+                                    {{ form.payment_type.label(class="form-control-label") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-floating">
+                            {% if form.special_instructions.errors %}
+                                {{ form.special_instructions(class="form-control form-control-md  is-invalid") }}
+                                {{ form.special_instructions.label(class="form-control-label") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.special_instructions.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.special_instructions(class="form-control form-control-md ") }}
+                                {{ form.special_instructions.label(class="form-control-label") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group ms-auto">
+                            {{ form.submit(class="btn btn-warning") }}
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
